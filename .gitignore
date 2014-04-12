@@ -2,4 +2,5 @@ html/
 pkg/
 .DS_Store
 stripe-mock-server.pid
+stripe-mock-server.log
 Gemfile.lock
