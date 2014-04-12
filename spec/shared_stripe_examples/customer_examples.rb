@@ -66,14 +66,29 @@ shared_examples 'Customer API' do
     }
   end
 
-  it 'creates a customer with a coupon discount' do
-    coupon = Stripe::Coupon.create(id: "10PERCENT")
+  it 'creates a customer with an expiring coupon discount', current: true do
+    coupon = Stripe::Coupon.create(id: "10PERCENT", duration: 'repeating', duration_in_months: 3)
 
     customer =
       Stripe::Customer.create(id: 'test_cus_coupon', coupon: '10PERCENT')
 
     customer = Stripe::Customer.retrieve('test_cus_coupon')
     expect(customer.discount).to_not be_nil
+    expect(customer.discount.start).to_not be_nil
+    expect(customer.discount.end).to_not be_nil
+    expect(customer.discount.coupon).to_not be_nil
+  end
+
+  it 'creates a customer with a never-ending coupon discount', current: true do
+    coupon = Stripe::Coupon.create(id: "10PERCENT", duration: 'forever')
+
+    customer =
+      Stripe::Customer.create(id: 'test_cus_coupon', coupon: '10PERCENT')
+
+    customer = Stripe::Customer.retrieve('test_cus_coupon')
+    expect(customer.discount).to_not be_nil
+    expect(customer.discount.start).to_not be_nil
+    expect(customer.discount.end).to be_nil
     expect(customer.discount.coupon).to_not be_nil
   end
 
