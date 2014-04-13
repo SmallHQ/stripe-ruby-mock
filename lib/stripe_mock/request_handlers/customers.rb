@@ -84,7 +84,15 @@ module StripeMock
       end
 
       def list_customers(route, method_url, params, headers)
-        customers.values
+        values = customers.values
+
+        if params[:expand] && params[:expand].include?('data.default_card')
+          values.collect { |customer| customer.merge({
+            default_card: customer[:cards][:data].first
+          }) }
+        else
+          values
+        end
       end
 
     end

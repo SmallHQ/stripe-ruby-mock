@@ -66,7 +66,7 @@ shared_examples 'Customer API' do
     }
   end
 
-  it 'creates a customer with an expiring coupon discount', current: true do
+  it 'creates a customer with an expiring coupon discount' do
     coupon = Stripe::Coupon.create(id: "10PERCENT", duration: 'repeating', duration_in_months: 3)
 
     customer =
@@ -79,7 +79,7 @@ shared_examples 'Customer API' do
     expect(customer.discount.coupon).to_not be_nil
   end
 
-  it 'creates a customer with a never-ending coupon discount', current: true do
+  it 'creates a customer with a never-ending coupon discount' do
     coupon = Stripe::Coupon.create(id: "10PERCENT", duration: 'forever')
 
     customer =
@@ -147,6 +147,13 @@ shared_examples 'Customer API' do
     all = Stripe::Customer.all
     expect(all.length).to eq(2)
     all.map(&:email).should include('one@one.com', 'two@two.com')
+  end
+
+  it "retrieves all customers, with expansion of the default_card" do
+    Stripe::Customer.create({ email: 'one@one.com', card: 'some_token' })
+
+    all = Stripe::Customer.all(expand: ['data.default_card'])
+    expect(all.first.default_card).to be_a Stripe::Card
   end
 
   it "updates a stripe customer" do
