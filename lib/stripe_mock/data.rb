@@ -155,6 +155,7 @@ module StripeMock
           :amount => 7500,
           :trial_period_days => 30,
           :object => "plan",
+          :created => 1366194027,
           :id => '__test_plan_id__'
         },
         :cancel_at_period_end => false,
@@ -280,6 +281,7 @@ module StripeMock
         object: "plan",
         livemode: false,
         interval_count: 1,
+        created: 1366194027,
         trial_period_days: nil
       }.merge(params)
     end
