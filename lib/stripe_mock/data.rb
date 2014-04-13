@@ -162,6 +162,7 @@ module StripeMock
         :canceled_at => nil,
         :ended_at => nil,
         :start => 1308595038,
+        :discount => nil,
         :object => "subscription",
         :trial_start => 1308595038,
         :trial_end => 1308681468,
