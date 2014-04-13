@@ -165,6 +165,7 @@ module StripeMock
         :trial_start => 1308595038,
         :trial_end => 1308681468,
         :customer => "c_test_customer",
+        :application_fee_percent => nil,
         :quantity => 1
       }, params)
     end
