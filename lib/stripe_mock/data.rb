@@ -139,6 +139,7 @@ module StripeMock
         :redeem_by => nil,
         :times_redeemed => 0,
         :valid => true,
+        :created => 1366194027,
         :metadata => {},
       }.merge(params)
     end
