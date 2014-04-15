@@ -49,6 +49,44 @@ shared_examples 'Customer Subscriptions' do
       expect(customer.subscriptions.data.last.customer).to eq(customer.id)
     end
 
+    it 'creates a subscription with an expiring coupon discount', current: true do
+      coupon = Stripe::Coupon.create(id: "10PERCENT", duration: 'repeating', duration_in_months: 3)
+      gold = Stripe::Plan.create(id: 'gold')
+
+      customer = Stripe::Customer.create(id: 'test_cus_sub_coupon', card: 'token')
+      subscription = customer.subscriptions.create(coupon: '10PERCENT', plan: 'gold')
+
+      expect(subscription.discount).to_not be_nil
+      expect(subscription.discount.start).to_not be_nil
+      expect(subscription.discount.end).to_not be_nil
+      expect(subscription.discount.coupon).to_not be_nil
+    end
+
+    it 'creates a customer with a never-ending coupon discount', current: true do
+      coupon = Stripe::Coupon.create(id: "10PERCENT", duration: 'forever')
+      gold = Stripe::Plan.create(id: 'gold')
+
+      customer = Stripe::Customer.create(id: 'test_cus_sub_coupon', card: 'token')
+      subscription = customer.subscriptions.create(coupon: '10PERCENT', plan: 'gold')
+
+      expect(subscription.discount).to_not be_nil
+      expect(subscription.discount.start).to_not be_nil
+      expect(subscription.discount.end).to be_nil
+      expect(subscription.discount.coupon).to_not be_nil
+    end
+
+    it 'cannot create a subscription with a coupon that does not exist', current: true do
+      gold = Stripe::Plan.create(id: 'gold')
+      customer = Stripe::Customer.create(id: 'test_cus_sub_no_coupon', card: 'token')
+
+      expect{
+        customer.subscriptions.create(plan: 'gold', coupon: 'does_not_exist')
+      }.to raise_error {|e|
+        expect(e).to be_a(Stripe::InvalidRequestError)
+        expect(e.message).to eq('No such coupon: does_not_exist')
+      }
+    end
+
     it "throws an error when plan does not exist" do
       customer = Stripe::Customer.create(id: 'cardless')
 

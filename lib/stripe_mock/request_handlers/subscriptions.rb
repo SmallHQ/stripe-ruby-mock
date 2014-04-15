@@ -24,6 +24,13 @@ module StripeMock
 
         subscription = add_subscription_to_customer(plan, customer, params[:current_period_start])
 
+        if params[:coupon]
+          coupon = coupons[ params[:coupon] ]
+          assert_existance :coupon, params[:coupon], coupon
+
+          add_coupon_to_subscription(subscription, coupon)
+        end
+
         # oddly, subscription returned from 'create_subscription' does not expand plan
         subscription.merge(plan: params[:plan])
       end
